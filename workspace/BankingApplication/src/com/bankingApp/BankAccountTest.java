@@ -1,20 +1,23 @@
 package com.bankingApp;
 
-import java.util.Scanner;
-
+import java.util.*;
+import com.bankingApp.utils.Validator;
 import com.bankingApp.bankAccount.BankAccount;
 import com.bankingApp.bankAccount.FixedDepositAccount;
 import com.bankingApp.bankAccount.SavingsAccount;
 import com.bankingApp.exp.CustomerNotFoundException;
+import com.bankingApp.exp.InsufficientFundsException;
 
 public class BankAccountTest {
 	
-	private Customer[] custArray;
-	private int custCount;
+	private List<Customer> list;
 	
 	public BankAccountTest(){
-		this.custArray = new Customer[100];
-		this.custCount = 0;
+		list = new ArrayList<>();
+		FileStorageDao fd = new FileStorageDao();
+		list = fd.deSerialize(list);
+
+		Customer.setCount(list.size());
 	}
 	
 	public static void main(String[] args) {
@@ -43,7 +46,7 @@ public class BankAccountTest {
 				bt.createCustomer(s);
 				break;
 			case 2:
-				System.out.println("Enter an id.");
+				System.out.println("Enter an id. ");
 				int id = s.nextInt();
 				System.out.println("Enter type of bank account.");
 				System.out.println("1. Savings Account \n2. Fixed Deposit Account");
@@ -51,6 +54,8 @@ public class BankAccountTest {
 				try {
 					bt.assignBankAccount(s,id,type);
 				} catch (CustomerNotFoundException e) {
+					System.out.println(e.getMessage());
+				} catch (InsufficientFundsException e) {
 					System.out.println(e.getMessage());
 				}
 				break;
@@ -67,7 +72,7 @@ public class BankAccountTest {
 				}
 				break;
 			case 4:
-				bt.sortCustomerData();
+				bt.sortCustomerData(s);
 				break;
 			case 5:
 				bt.persistCustomerData();
@@ -76,7 +81,7 @@ public class BankAccountTest {
 				bt.showAllCustomers();
 				break;
 			case 7:
-				System.out.println("Enter a name.");
+				System.out.println("Enter a name. ");
 				s.nextLine();
 				String name = s.nextLine();
 				try {
@@ -88,49 +93,62 @@ public class BankAccountTest {
 				
 			}
 		}while(choice!=8);
+		System.out.println("Thank you for banking with us, have a nice day".toUpperCase());
 	}
 	
 	//create customer	
 	public void createCustomer(Scanner s) {
-		System.out.println("Enter a name.");
+		System.out.print("Enter a name ");
 		s.nextLine();
 		String name = s.nextLine();
-		System.out.println("Enter age");
+		System.out.print("Enter age ");
 		int age = s.nextInt();
-		System.out.println("Enter mobile number");
+		System.out.print("Enter mobile number ");
 		int mobile = s.nextInt();
-		System.out.println("Enter passport number");
+		System.out.print("Enter passport number ");
 		s.nextLine();
 		String passportNumber = s.nextLine();
-		System.out.println("Enter Date Of Birth");
+		System.out.print("Enter Date Of Birth ");
 		String dob = s.nextLine();
 		Customer c = new Customer(name, age, mobile, passportNumber, dob);
 		
-		while(!c.isValidDob()) {
-			System.out.println("Enter a Valid Date Of Birth");
+		while(!Validator.isValidDob(c.getDob())) {
+			System.out.print("Enter a Valid Date Of Birth ");
 			dob = s.nextLine();
 			c.setDob(dob);
 		}
-		
-		if(custCount<100) {
-			custArray[custCount++] = c;	
-		}
+		list.add(c);
+
 		System.out.println("Customer created successfully");
 		System.out.println(c);
 	}
 	
 	//assign bank account
-	public void assignBankAccount(Scanner s, int id, int type) throws CustomerNotFoundException{
+	public void assignBankAccount(Scanner s, int id, int type) throws CustomerNotFoundException,InsufficientFundsException{
+		Customer c = null;
+		for(int i = 0 ; i < list.size(); i++) {
+			if(list.get(i).getId()==id) 
+			{
+				c = list.get(i);
+				break;
+			}
+			if(i==list.size()-1) {
+				throw new CustomerNotFoundException("Customer with ID "+id+" not found");
+			}
+		}
 		
-		System.out.println("Enter the Account Number.");
+		System.out.print("Enter the Account Number ");
 		long accountNumber = s.nextLong();
-		System.out.println("Enter BSB Code");
+		System.out.print("Enter IFSC Code ");
 		long BSBCode = s.nextLong();
-		System.out.println("Enter Bank name");
+		System.out.print("Enter Bank name ");
 		s.nextLine();
 		String bankName = s.nextLine();
+		System.out.print("Enter balance ");
+		double balance=s.nextDouble();
 		
-		System.out.println("Enter Opening Date (DD/MM/YYYY)");
+		System.out.print("Enter Opening Date (DD/MM/YYYY) ");
+		s.nextLine();
 		String opDate = s.nextLine();
 		
 		BankAccount ba;
@@ -139,7 +157,11 @@ public class BankAccountTest {
 			System.out.println("1. Yes \n2. No");
 			int choice = s.nextInt();
 			boolean isSalaryAccount = (choice==1);
-			ba = new SavingsAccount(accountNumber, BSBCode, bankName, SavingsAccount.DEFAULT_BALANCE, opDate, isSalaryAccount);
+			if(!isSalaryAccount && balance<SavingsAccount.DEFAULT_BALANCE) {
+				throw new InsufficientFundsException("Ensure minimum balance for savings account ");
+			}
+			ba = new SavingsAccount(accountNumber, BSBCode, bankName, balance, opDate, isSalaryAccount);
+			System.out.print("Bank Account Set Successfully");
 		}
 		else
 		{
@@ -149,31 +171,24 @@ public class BankAccountTest {
 				tenure = s.nextInt();
 			}while(tenure < FixedDepositAccount.MIN_TENURE || tenure > FixedDepositAccount.MAX_TENURE) ;
 			
-			double balance=0;
-			do{
+			
+			while(balance < FixedDepositAccount.MINIMUM_DEPOSIT_AMOUNT){
 				System.out.println("Enter amount: must be greater than "+FixedDepositAccount.MINIMUM_DEPOSIT_AMOUNT);
 				balance = s.nextDouble();
-			}while(balance < FixedDepositAccount.MINIMUM_DEPOSIT_AMOUNT) ;
+			}
 			
 			ba = new FixedDepositAccount(accountNumber, BSBCode, bankName, balance, opDate,tenure);
+			System.out.print("Bank Account Set Successfully");
 		}
-		for(int i = 0 ; i < custCount; i++) {
-			if(custArray[i].getId()==id) 
-			{
-				custArray[i].setBankAccount(ba);
-				System.out.println("Bank account added successfully");
-				System.out.println(custArray[i]);
-				return;
-			}
-		}
-		throw new CustomerNotFoundException("Customer with ID "+id+" not found");
+		c.setBankAccount(ba);
+		
 	}
 	
 	public  void displayBalance(int id) throws CustomerNotFoundException{
-		for(int i = 0 ; i < custCount; i++) {
-			if(custArray[i].getId()==id) 
+		for(int i = 0 ; i < list.size(); i++) {
+			if(list.get(i).getId()==id) 
 			{
-				Customer c = custArray[i];
+				Customer c = list.get(i);
 				System.out.println("Balance is "+c.getBankAccount().getBalance());
 				System.out.println("Interest Earned is "+c.getBankAccount().calculateInterest());
 				return;
@@ -181,27 +196,69 @@ public class BankAccountTest {
 		}
 		throw new CustomerNotFoundException("Customer with ID "+id+" not found");
 	}
-	// TO-DO
-	public  void sortCustomerData() {
+
+	public  void sortCustomerData(Scanner s) {
 		
+		Comparator<Customer> comName = new Comparator<>() {
+
+			@Override
+			public int compare(Customer c1, Customer c2) {
+				return c1.getName().compareTo(c2.getName());
+			}
+			
+		};
+		Comparator<Customer> comId = new Comparator<>() {
+
+			@Override
+			public int compare(Customer c1, Customer c2) {
+				Integer c1Id = c1.getId();
+				Integer c2Id = c2.getId();
+				return c1Id.compareTo(c2Id);
+			}
+			
+		};
+		Comparator<Customer> comBalance = new Comparator<>() {
+
+			@Override
+			public int compare(Customer c1, Customer c2) {
+				Double c1Balance = c1.getBankAccount().getBalance();
+				Double c2Balance = c2.getBankAccount().getBalance();
+				return c1Balance.compareTo(c2Balance);
+			}
+			
+		};
+		System.out.println("On what basis do you want to sort the customers.\n1.Name\n2.ID\n3.Balance");
+		int choice = s.nextInt();
+		if(choice==1) {
+			Collections.sort(list,comName);
+		}
+		else if(choice==2){
+			Collections.sort(list,comId);
+		}
+		else {
+			Collections.sort(list,comBalance);
+		}
+		System.out.println(list);
 	}
-	// TO-DO
+	
 	public  void persistCustomerData() {
-		
+		FileStorageDao fd = new FileStorageDao();
+		fd.serialize(list);
 	}
 	
 	public  void showAllCustomers() {
-		for(int i = 0 ; i < custCount; i++) {
-			System.out.println(custArray[i]);
+		//print it neatly in a table
+		for(int i = 0 ; i < list.size(); i++) {
+			System.out.println(list.get(i));
 		}
 	}
 	
 	public  void searchCustomerByName(String name) throws CustomerNotFoundException{
 		boolean flag = false;
-		for(int i = 0 ; i < custCount; i++) {
-			if(custArray[i].getName().equals(name)) 
+		for(int i = 0 ; i < list.size(); i++) {
+			if(list.get(i).getName().equals(name)) 
 			{
-				System.out.println(custArray[i]);
+				System.out.println(list.get(i));
 				flag = true;			
 			}
 		}

@@ -1,9 +1,20 @@
 package com.bankingApp;
 
+import java.io.Serializable;
+
 import com.bankingApp.bankAccount.BankAccount;
 
-public class Customer {
+@SuppressWarnings("serial")
+public class Customer implements Serializable{
 	private static int count;
+	public static int getCount() {
+		return count;
+	}
+
+	public static void setCount(int count) {
+		Customer.count = count;
+	}
+
 	private int id;
 	private String name;
 	private int age;
@@ -67,61 +78,12 @@ public class Customer {
 		this.dob = dob;
 	}
 
-	public boolean isValidDob() {
-		String[] words = dob.split("/");
-		if(words.length > 3) return false;
-		int date = Integer.parseInt(words[0]);
-		int month = Integer.parseInt(words[1]);
-		int year = Integer.parseInt(words[2]);
-		
-		if(year>2023 || month > 12 || month < 1 || date<1) return false;
-		
-		switch(month) {
-		case 1:
-			if(date>31) return false;
-			break;
-		case 2:
-			if(date>29 || (date==29 && year%100 ==0 && year%400 !=0) || (date==29 && year%4 != 0)) return false;
-			break;
-		case 3:
-			if(date>31) return false;
-			break;
-		case 5:
-			if(date>31) return false;
-			break;
-		case 7:
-			if(date>31) return false;
-			break;
-		case 8:
-			if(date>31) return false;
-			break;
-		case 10:
-			if(date>31) return false;
-			break;
-		case 12:
-			if(date>31) return false;
-			break;
-		case 4:
-			if(date>30) return false;
-			break;
-		case 6:
-			if(date>30) return false;
-			break;
-		case 9:
-			if(date>30) return false;
-			break;
-		case 11:
-			if(date>30) return false;
-			break;
-		}
-			
-		return true;
-	}
-
 	@Override
 	public String toString() {
-		return "Customer [id=" + id + ", name=" + name + ", age=" + age + ", mobileNumber=" + mobileNumber
-				+ ", passportNumber=" + passportNumber + ", bankAccount=" + bankAccount + ", dob=" + dob + "]";
+
+		System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");
+		return "Customer \t [id=" + id + "\t\t name=" + name + "\t age=" + age + "\t\t mobileNumber=" + mobileNumber
+				+ "\t passportNumber=" + passportNumber + "\t dob=" + dob +"]"+"\n---------------------------------------------------------------------------------------------------------------------------------------\nBankAccount   " + bankAccount ;
 	}
 	
 	

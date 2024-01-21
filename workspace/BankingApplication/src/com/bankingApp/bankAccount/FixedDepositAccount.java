@@ -1,5 +1,5 @@
 package com.bankingApp.bankAccount;
-
+@SuppressWarnings("serial")
 public class FixedDepositAccount extends BankAccount {
 	public static final double MINIMUM_DEPOSIT_AMOUNT=1000;
 	public static final int MIN_TENURE=1;

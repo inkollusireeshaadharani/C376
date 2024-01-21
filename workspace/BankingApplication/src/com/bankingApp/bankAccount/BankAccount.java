@@ -1,10 +1,13 @@
 package com.bankingApp.bankAccount;
 
-public abstract class BankAccount {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public abstract class BankAccount implements Serializable{
 	private long accountNumber;
 	private long bSBCode;
 	private String bankName;
-	private double balance;
+	private transient double balance;
 	private String openingDate;
 	
 	private double interestEarned;
@@ -63,8 +66,8 @@ public abstract class BankAccount {
 	//toString
 	@Override
 	public String toString() {
-		return "BankAccount [accountNumber=" + accountNumber + ", bSBCode=" + bSBCode + ", bankName=" + bankName
-				+ ", balance=" + balance + ", openingDate=" + openingDate + ", interestEarned=" + interestEarned + "]";
+		return "\t [accountNumber=" + accountNumber + "\t bSBCode=" + bSBCode + "\t bankName=" + bankName
+				+ "\t balance=" + balance + "\t\t openingDate=" + openingDate + "\t interestEarned=" + interestEarned + "]";
 	}
 	
 	
