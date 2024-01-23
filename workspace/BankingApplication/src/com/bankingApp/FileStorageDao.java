@@ -60,7 +60,7 @@ public class FileStorageDao {
 			if(obj instanceof List) {
 				list = (List<Customer>) obj; 
 				for(Customer c : list) {
-					System.out.println(c);
+					c.printCustomerData();
 				}
 			}
 		}
@@ -71,7 +71,7 @@ public class FileStorageDao {
 			e.printStackTrace();
 		}
 		System.out.println("Successfully Loaded Customers Data");
-		System.out.println("==============================================================================================");
+//		System.out.println("==============================================================================================");
 		return list;
 	}
 

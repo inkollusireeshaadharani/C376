@@ -1,26 +1,24 @@
 package com.bankingApp;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.bankingApp.bankAccount.BankAccount;
 
 @SuppressWarnings("serial")
 public class Customer implements Serializable{
 	private static int count;
-	public static int getCount() {
-		return count;
-	}
-
-	public static void setCount(int count) {
-		Customer.count = count;
-	}
-
+	
 	private int id;
 	private String name;
 	private int age;
 	private int mobileNumber;
 	private String passportNumber;
-	private BankAccount bankAccount;
+	
+//	private BankAccount bankAccount;
+	public List<BankAccount> bankAccounts;
+	
 	private String dob;
 	
 	
@@ -31,6 +29,14 @@ public class Customer implements Serializable{
 		this.mobileNumber = mobileNumber;
 		this.passportNumber = passportNumber;
 		this.dob = dob;
+		this.bankAccounts = new LinkedList<>();
+	}
+	public static int getCount() {
+		return count;
+	}
+
+	public static void setCount(int count) {
+		Customer.count = count;
 	}
 	
 	public int getId() {
@@ -62,13 +68,13 @@ public class Customer implements Serializable{
 		this.passportNumber = passportNumber;
 	}
 
-	public BankAccount getBankAccount() {
-		return bankAccount;
-	}
-
-	public void setBankAccount(BankAccount bankAccount) {
-		this.bankAccount = bankAccount;
-	}
+//	public BankAccount getBankAccount() {
+//		return bankAccount;
+//	}
+//
+//	public void setBankAccount(BankAccount bankAccount) {
+//		this.bankAccount = bankAccount;
+//	}
 
 	public String getDob() {
 		return dob;
@@ -80,10 +86,34 @@ public class Customer implements Serializable{
 
 	@Override
 	public String toString() {
+		this.printCustomerData();
+		return "";
+	}
+	
+	public void printCustomerData() {
+		System.out.println("CUSTOMER ");
+		
+		System.out.print(String.format("%-5s%-8s","Id:",id));
+		System.out.print(String.format("%-7s%-15s","Name:",name));
+		System.out.print(String.format("%-5s%-8s","Age:",age));
+		System.out.print(String.format("%-8s%-15s","Mobile:",mobileNumber));
+		System.out.print(String.format("%-9s%-11s","Passport:",passportNumber));
+		System.out.println(String.format("%-5s%-15s","Dob:",dob));
+		System.out.println();
 
-		System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");
-		return "Customer \t [id=" + id + "\t\t name=" + name + "\t age=" + age + "\t\t mobileNumber=" + mobileNumber
-				+ "\t passportNumber=" + passportNumber + "\t dob=" + dob +"]"+"\n---------------------------------------------------------------------------------------------------------------------------------------\nBankAccount   " + bankAccount ;
+		for(int i = 0; i<bankAccounts.size();i++) {
+			System.out.println("Account "+(i+1)+":");
+			BankAccount ba=bankAccounts.get(i);
+			System.out.print(String.format("%-15s%-10s","AccountNumber:",ba.getAccountNumber()));
+			System.out.print(String.format("%-11s%-9s","IFSC CODE:",ba.getBSBCode()));
+			System.out.print(String.format("%-10s%-10s","BankName:",ba.getBankName()));
+			System.out.print(String.format("%-10s%-10s","Balance:",ba.getBalance()));
+			System.out.print(String.format("%-10s%-10s","Interest:",ba.getInterestEarned()));
+			System.out.println(String.format("%-14s%-15s","OpeningDate:",ba.getOpeningDate()));
+			System.out.println();
+		}
+		System.out.print("-----------------------------------------------------------------------------");
+		System.out.println("---------------------------------------------------");
 	}
 	
 	

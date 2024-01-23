@@ -93,34 +93,35 @@ public class BankAccountTest {
 				
 			}
 		}while(choice!=8);
+		bt.persistCustomerData();
 		System.out.println("Thank you for banking with us, have a nice day".toUpperCase());
 	}
 	
 	//create customer	
 	public void createCustomer(Scanner s) {
-		System.out.print("Enter a name ");
+		System.out.print("Enter a name: ");
 		s.nextLine();
 		String name = s.nextLine();
-		System.out.print("Enter age ");
+		System.out.print("Enter age: ");
 		int age = s.nextInt();
-		System.out.print("Enter mobile number ");
+		System.out.print("Enter mobile number(9 digits): ");
 		int mobile = s.nextInt();
-		System.out.print("Enter passport number ");
+		System.out.print("Enter passport number: ");
 		s.nextLine();
 		String passportNumber = s.nextLine();
-		System.out.print("Enter Date Of Birth ");
+		System.out.print("Enter Date Of Birth(DD/MM/YYYY) : ");
 		String dob = s.nextLine();
 		Customer c = new Customer(name, age, mobile, passportNumber, dob);
 		
 		while(!Validator.isValidDob(c.getDob())) {
-			System.out.print("Enter a Valid Date Of Birth ");
+			System.out.print("Enter a Valid Date Of Birth(DD/MM/YYYY) : ");
 			dob = s.nextLine();
 			c.setDob(dob);
 		}
 		list.add(c);
 
 		System.out.println("Customer created successfully");
-		System.out.println(c);
+		c.printCustomerData();
 	}
 	
 	//assign bank account
@@ -137,17 +138,22 @@ public class BankAccountTest {
 			}
 		}
 		
-		System.out.print("Enter the Account Number ");
+		if(c.bankAccounts.size()>3) {
+			System.out.println("Sorry you have reached your maximum limit for bank accounts");
+			return;
+		}
+		
+		System.out.print("Enter the Account Number: ");
 		long accountNumber = s.nextLong();
-		System.out.print("Enter IFSC Code ");
+		System.out.print("Enter IFSC Code: ");
 		long BSBCode = s.nextLong();
-		System.out.print("Enter Bank name ");
+		System.out.print("Enter Bank name: ");
 		s.nextLine();
 		String bankName = s.nextLine();
-		System.out.print("Enter balance ");
+		System.out.print("Enter balance: ");
 		double balance=s.nextDouble();
 		
-		System.out.print("Enter Opening Date (DD/MM/YYYY) ");
+		System.out.print("Enter Opening Date(DD/MM/YYYY) : ");
 		s.nextLine();
 		String opDate = s.nextLine();
 		
@@ -161,7 +167,8 @@ public class BankAccountTest {
 				throw new InsufficientFundsException("Ensure minimum balance for savings account ");
 			}
 			ba = new SavingsAccount(accountNumber, BSBCode, bankName, balance, opDate, isSalaryAccount);
-			System.out.print("Bank Account Set Successfully");
+			ba.calculateInterest();
+			System.out.println("Bank Account Set Successfully");
 		}
 		else
 		{
@@ -173,14 +180,16 @@ public class BankAccountTest {
 			
 			
 			while(balance < FixedDepositAccount.MINIMUM_DEPOSIT_AMOUNT){
-				System.out.println("Enter amount: must be greater than "+FixedDepositAccount.MINIMUM_DEPOSIT_AMOUNT);
+				System.out.println("Enter balance again: must be greater than "+FixedDepositAccount.MINIMUM_DEPOSIT_AMOUNT);
 				balance = s.nextDouble();
 			}
 			
 			ba = new FixedDepositAccount(accountNumber, BSBCode, bankName, balance, opDate,tenure);
-			System.out.print("Bank Account Set Successfully");
+			ba.calculateInterest();
+			System.out.println("Bank Account Set Successfully");
 		}
-		c.setBankAccount(ba);
+//		c.setBankAccount(ba);
+		c.bankAccounts.add(ba);
 		
 	}
 	
@@ -189,8 +198,11 @@ public class BankAccountTest {
 			if(list.get(i).getId()==id) 
 			{
 				Customer c = list.get(i);
-				System.out.println("Balance is "+c.getBankAccount().getBalance());
-				System.out.println("Interest Earned is "+c.getBankAccount().calculateInterest());
+				for(BankAccount ba : c.bankAccounts) {
+					System.out.println("Balance is "+ba.getBalance());
+					System.out.println("Interest Earned is "+ba.calculateInterest());
+				}
+				
 				return;
 			}
 		}
@@ -221,9 +233,14 @@ public class BankAccountTest {
 
 			@Override
 			public int compare(Customer c1, Customer c2) {
-				Double c1Balance = c1.getBankAccount().getBalance();
-				Double c2Balance = c2.getBankAccount().getBalance();
-				return c1Balance.compareTo(c2Balance);
+				Double total1 = 0.0,total2=0.0;
+				for(BankAccount ba : c1.bankAccounts) {
+					total1+=ba.getBalance();
+				}
+				for(BankAccount ba : c2.bankAccounts) {
+					total2+=ba.getBalance();
+				}
+				return total1.compareTo(total2);
 			}
 			
 		};
@@ -238,7 +255,9 @@ public class BankAccountTest {
 		else {
 			Collections.sort(list,comBalance);
 		}
-		System.out.println(list);
+		for(int i = 0 ; i < list.size(); i++) {
+			list.get(i).printCustomerData();
+		}
 	}
 	
 	public  void persistCustomerData() {
@@ -247,9 +266,8 @@ public class BankAccountTest {
 	}
 	
 	public  void showAllCustomers() {
-		//print it neatly in a table
 		for(int i = 0 ; i < list.size(); i++) {
-			System.out.println(list.get(i));
+			list.get(i).printCustomerData();
 		}
 	}
 	
@@ -258,7 +276,7 @@ public class BankAccountTest {
 		for(int i = 0 ; i < list.size(); i++) {
 			if(list.get(i).getName().equals(name)) 
 			{
-				System.out.println(list.get(i));
+				list.get(i).printCustomerData();
 				flag = true;			
 			}
 		}

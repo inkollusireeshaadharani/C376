@@ -7,7 +7,8 @@ public abstract class BankAccount implements Serializable{
 	private long accountNumber;
 	private long bSBCode;
 	private String bankName;
-	private transient double balance;
+//	private transient double balance;
+	private double balance;
 	private String openingDate;
 	
 	private double interestEarned;
@@ -66,8 +67,14 @@ public abstract class BankAccount implements Serializable{
 	//toString
 	@Override
 	public String toString() {
-		return "\t [accountNumber=" + accountNumber + "\t bSBCode=" + bSBCode + "\t bankName=" + bankName
-				+ "\t balance=" + balance + "\t\t openingDate=" + openingDate + "\t interestEarned=" + interestEarned + "]";
+		System.out.print(String.format("%-15s%-10s","accountNumber:",this.getAccountNumber()));
+		System.out.print(String.format("%-11s%-9s","IFSC CODE:",this.getBSBCode()));
+		System.out.print(String.format("%-10s%-10s","bankName:",this.getBankName()));
+		System.out.print(String.format("%-10s%-10s","balance:",this.getBalance()));
+		System.out.print(String.format("%-10s%-10s","balance:",this.getInterestEarned()));
+		System.out.println(String.format("%-14s%-15s","openingDate:",this.getOpeningDate()));
+		System.out.println();
+		return "";
 	}
 	
 	
