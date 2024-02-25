@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>StudentRegistration</display-name>
+    <context-param>
+        <param-name>jdbcUrl</param-name>
+        <param-value>jdbc:mysql://localhost:3306/studentsdb?useSSL=false</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>jdbcUsername</param-name>
+        <param-value>root</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>jdbcPassword</param-name>
+        <param-value>root</param-value>
+    </context-param>
+  <servlet>
+    <description></description>
+    <display-name>StudentRegistrationServlet</display-name>
+    <servlet-name>StudentRegistrationServlet</servlet-name>
+    <servlet-class>com.wileyedge.controller.StudentRegistrationServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>StudentRegistrationServlet</servlet-name>
+    <url-pattern>/register</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EntryPoint</display-name>
+    <servlet-name>EntryPoint</servlet-name>
+    <servlet-class>com.wileyedge.controller.EntryPoint</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EntryPoint</servlet-name>
+    <url-pattern>/servlet</url-pattern>
+  </servlet-mapping>
+</web-app>
