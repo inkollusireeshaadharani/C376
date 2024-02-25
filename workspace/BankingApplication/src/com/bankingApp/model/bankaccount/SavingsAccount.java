@@ -1,4 +1,4 @@
-package com.bankingApp.bankAccount;
+package com.bankingApp.model.bankaccount;
 
 import com.bankingApp.exp.InsufficientFundsException;
 

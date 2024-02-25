@@ -2,11 +2,14 @@ package com.bankingApp;
 
 import java.util.*;
 import com.bankingApp.utils.Validator;
-import com.bankingApp.bankAccount.BankAccount;
-import com.bankingApp.bankAccount.FixedDepositAccount;
-import com.bankingApp.bankAccount.SavingsAccount;
+import com.bankingApp.dao.DatabaseStorageDao;
+import com.bankingApp.dao.FileStorageDao;
 import com.bankingApp.exp.CustomerNotFoundException;
 import com.bankingApp.exp.InsufficientFundsException;
+import com.bankingApp.model.Customer;
+import com.bankingApp.model.bankaccount.BankAccount;
+import com.bankingApp.model.bankaccount.FixedDepositAccount;
+import com.bankingApp.model.bankaccount.SavingsAccount;
 
 public class BankAccountTest {
 	
@@ -75,7 +78,13 @@ public class BankAccountTest {
 				bt.sortCustomerData(s);
 				break;
 			case 5:
-				bt.persistCustomerData();
+				try {
+					bt.persistCustomerData();
+					bt.persistCustomerDataDB();
+				}
+				catch(Exception e) {
+					System.out.println(e.getMessage());
+				}
 				break;
 			case 6:
 				bt.showAllCustomers();
@@ -93,7 +102,7 @@ public class BankAccountTest {
 				
 			}
 		}while(choice!=8);
-		bt.persistCustomerData();
+//		bt.persistCustomerData();
 		System.out.println("Thank you for banking with us, have a nice day".toUpperCase());
 	}
 	
@@ -263,6 +272,11 @@ public class BankAccountTest {
 	public  void persistCustomerData() {
 		FileStorageDao fd = new FileStorageDao();
 		fd.serialize(list);
+	}
+	public  void persistCustomerDataDB() {
+		DatabaseStorageDao db = new DatabaseStorageDao();
+		db.insertCustomers(list);
+		System.out.println("Successfully updated Database");
 	}
 	
 	public  void showAllCustomers() {

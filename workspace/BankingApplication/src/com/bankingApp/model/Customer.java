@@ -1,10 +1,10 @@
-package com.bankingApp;
+package com.bankingApp.model;
 
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.bankingApp.bankAccount.BankAccount;
+import com.bankingApp.model.bankaccount.BankAccount;
 
 @SuppressWarnings("serial")
 public class Customer implements Serializable{
@@ -84,6 +84,13 @@ public class Customer implements Serializable{
 		this.dob = dob;
 	}
 
+	public List<BankAccount> getBankAccounts() {
+		return bankAccounts;
+	}
+	public void setBankAccounts(List<BankAccount> bankAccounts) {
+		this.bankAccounts = bankAccounts;
+	}	
+
 	@Override
 	public String toString() {
 		this.printCustomerData();
@@ -115,14 +122,5 @@ public class Customer implements Serializable{
 		System.out.print("-----------------------------------------------------------------------------");
 		System.out.println("---------------------------------------------------");
 	}
-	
-	
-	
-	
-	
-
-	
-	
-	
 	
 }

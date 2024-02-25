@@ -1,4 +1,4 @@
-package com.bankingApp;
+package com.bankingApp.dao;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -12,6 +12,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 //import java.util.ArrayList;
 import java.util.List;
+
+import com.bankingApp.model.Customer;
 
 
 public class FileStorageDao {
