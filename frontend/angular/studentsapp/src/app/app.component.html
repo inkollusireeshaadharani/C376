@@ -1,0 +1,101 @@
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Student Information</h1>
+  <!-- {{ searchForm.value | json }} -->
+  <form [formGroup]="searchForm">
+    <div class="row justify-content-center">
+      <div class="col-sm-4">
+        <input
+          formControlName="searchName"
+          type="text"
+          class="form-control"
+          placeholder="Search by Name"
+          (input)="searchStudents()"
+        />
+      </div>
+      <div class="col-sm-1">
+        <button class="btn btn-primary" (click)="searchStudents()">
+          Search
+        </button>
+      </div>
+      <div class="col-sm-2">
+        <button class="btn btn-primary" (click)="getStudents()">
+          Display All
+        </button>
+      </div>
+    </div>
+    <br />
+  </form>
+
+  <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+    <div class="row justify-content-center">
+      <div class="col-sm-2">
+        <input
+          formControlName="name"
+          type="text"
+          class="form-control"
+          placeholder="Name"
+        />
+      </div>
+
+      <div class="form-group col-sm-2">
+        <input
+          formControlName="mobileno"
+          type="text"
+          class="form-control"
+          placeholder="MobileNo"
+        />
+      </div>
+      <div class="form-group col-sm-2">
+        <input
+          formControlName="age"
+          type="text"
+          class="form-control"
+          placeholder="Age"
+        />
+      </div>
+      <div class="form-group col-sm-2">
+        <input
+          formControlName="address"
+          type="text"
+          class="form-control"
+          placeholder="Address"
+        />
+      </div>
+      <div class="col-sm-2">
+        <button class="btn btn-success" type="submit ">Add Student</button>
+      </div>
+    </div>
+    <br />
+  </form>
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Roll No</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Address</th>
+        <th>Mobile No</th>
+        <th class="bg-secondary text-white">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let stud of studentList">
+        <td>{{ stud.rollno }}</td>
+        <td>{{ stud.name }}</td>
+        <td>{{ stud.age }}</td>
+        <td>{{ stud.address }}</td>
+        <td>{{ stud.mobileNo }}</td>
+        <td>
+          <!-- <button class="btn btn-warning btn-sm" (click)="editStudent(stud)">Edit</button> -->
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="deleteStudent(stud.rollno)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
