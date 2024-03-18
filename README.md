@@ -7,3 +7,5 @@
 - Algorithms
 - JSP & Servlets
 - Spring MVC
+- Spring Boot
+- Angular
